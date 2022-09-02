@@ -298,10 +298,10 @@ resource "azurerm_key_vault_access_policy" "worker" {
 }
 
 # Virtual network integration
-resource "azurerm_app_service_virtual_network_swift_connection" "example" {
-  app_service_id = module.worker.id
-  subnet_id      = data.terraform_remote_state.sql.outputs.subnet1.id
-}
+# resource "azurerm_app_service_virtual_network_swift_connection" "example" {
+#   app_service_id = module.worker.id
+#   subnet_id      = data.terraform_remote_state.sql.outputs.subnet1.id
+# }
 # [STORAGE] --------------------------------------------------------------------------------------------------------------------------------
 resource "random_id" "secret" {
   byte_length = 6
