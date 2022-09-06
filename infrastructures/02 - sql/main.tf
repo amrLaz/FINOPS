@@ -88,8 +88,21 @@ module "mssql_server_default" {
   tenant_id      = data.azurerm_client_config.default.tenant_id
   object_id      = data.azurerm_client_config.default.object_id
   object_name    = "Azure DevOps"
+  tags = merge(local.tags, {
+    environment = "dev"
+    owner       = "amr.lazraq@exakis-nelite.com"
+  })
 }
 
+resource "azurerm_key_vault_access_policy" "mssql_server_default" {
+  key_vault_id = data.terraform_remote_state.default.outputs.key_vault.id
+  object_id    = module.mssql_server.identity[0].principal_id
+  tenant_id    = module.mssql_server.identity[0].tenant_id
+
+  secret_permissions = [
+    "Get"
+  ]
+}
 
 
 # [DATABASE] --------------------------------------------------------------------------------------------------------------
@@ -97,14 +110,21 @@ module "mssql_database" {
   source         = "../../modules/microsoft/azurerm/azurerm_mssql_database"
   server_id      = module.mssql_server_default.id
   naming_options = local.naming_options
+  tags = merge(local.tags, {
+    environment = "dev"
+    owner       = "amr.lazraq@exakis-nelite.com"
+  })
 }
 
 resource "azurerm_private_endpoint" "mssql_server_pe" {
   name                = module.mssql_server_default.name
   location            = data.terraform_remote_state.default.outputs.resource_group.location
   resource_group_name = data.terraform_remote_state.default.outputs.resource_group.name
-  subnet_id           = data.terraform_remote_state.default.outputs.subnet-00.id
-
+  subnet_id           = data.terraform_remote_state.default.outputs.subnet0.id
+  tags = merge(local.tags, {
+    environment = "dev"
+    owner       = "amr.lazraq@exakis-nelite.com"
+  })
   private_service_connection {
     name                           = module.mssql_server_default.name
     private_connection_resource_id = module.mssql_server_default.id

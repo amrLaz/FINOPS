@@ -69,6 +69,10 @@ module "virtual_network" {
   resource_group = module.resource_group
   naming_options = local.naming_options
   address_space  = local.address_space
+  tags = merge(local.tags, {
+    environment = "dev"
+    owner       = "amr.lazraq@exakis-nelite.com"
+  })
 }
 
 
@@ -110,5 +114,64 @@ module "bb_log_analytics_workspace" {
   naming_options    = local.naming_options
   sku               = "PerGB2018"
   retention_in_days = 30
+  tags = merge(local.tags, {
+    environment = "dev"
+    owner       = "amr.lazraq@exakis-nelite.com"
+  })
+}
+
+# [ Key Vault ]
+# ----------------------------------------------------------------------------------------------------
+module "key_vault" {
+  source         = "../../modules/microsoft/azurerm/azurerm_key_vault"
+  resource_group = module.resource_group
+  naming_options = local.naming_options
+  tenant_id      = data.azurerm_client_config.default.tenant_id
+  tags = merge(local.tags, {
+    environment = "dev"
+    owner       = "amr.lazraq@exakis-nelite.com"
+  })
+}
+
+resource "azurerm_key_vault_access_policy" "default" {
+  key_vault_id = module.key_vault.id
+  object_id    = data.azurerm_client_config.default.object_id
+  tenant_id    = data.azurerm_client_config.default.tenant_id
+
+  secret_permissions = [
+    "Get", "Set"
+  ]
+}
+
+# resource "azurerm_key_vault_access_policy" "mssql_server_default" {
+#   key_vault_id = module.key_vault.id
+#   object_id    = data.terraform_remote_state.sql.outputs.mssql_server.identity[0].principal_id
+#   tenant_id    = data.terraform_remote_state.sql.outputs.mssql_server.identity[0].tenant_id
+
+#   secret_permissions = [
+#     "Get"
+#   ]
+# }
+
+# { Diagnostic Settings }
+module "key_vault_diagnostic_setting" {
+  source                     = "../../modules/microsoft/azurerm/azurerm_monitor_diagnostic_setting"
+  name                       = module.log_analytics_workspace.name
+  target_resource_id         = module.key_vault.id
+  log_analytics_workspace_id = module.log_analytics_workspace.id
+}
+
+resource "azurerm_private_endpoint" "key_vault" {
+  name                = module.key_vault.name
+  location            = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  subnet_id           = module.subnet2.id
+
+  private_service_connection {
+    name                           = module.key_vault.name
+    private_connection_resource_id = module.key_vault.id
+    is_manual_connection           = false
+    subresource_names              = ["vault"]
+  }
 }
 
