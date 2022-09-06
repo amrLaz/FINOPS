@@ -7,16 +7,22 @@ output "subnet0" {
   sensitive = true
 }
 
-output "subnet2" {
-  value     = module.subnet-02
-  sensitive = true
-}
+
 
 output "subnet1" {
   value     = module.subnet-01
   sensitive = true
 }
 
+output "subnet2" {
+  value     = module.subnet-02
+  sensitive = true
+}
+
+output "subnet3" {
+  value     = module.subnet-03
+  sensitive = true
+}
 
 output "virtual-network" {
   value     = module.virtual_network

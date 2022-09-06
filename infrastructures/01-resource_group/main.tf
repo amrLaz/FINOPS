@@ -106,6 +106,13 @@ module "subnet-02" {
   address_prefixes = [local.address_space[2]]
 }
 
+module "subnet-03" {
+  source           = "../../modules/microsoft/azurerm/azurerm_subnet/default"
+  resource_group   = module.resource_group
+  virtual_network  = module.virtual_network
+  naming_options   = merge(local.naming_options, { suffix : "storage" })
+  address_prefixes = [local.address_space[3]]
+}
 # [ Log Analytics Workspace ]
 # ----------------------------------------------------------------------------------------------------
 module "bb_log_analytics_workspace" {
