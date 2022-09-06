@@ -114,10 +114,7 @@ module "bb_log_analytics_workspace" {
   naming_options    = local.naming_options
   sku               = "PerGB2018"
   retention_in_days = 30
-  tags = merge(local.tags, {
-    environment = "dev"
-    owner       = "amr.lazraq@exakis-nelite.com"
-  })
+ 
 }
 
 # [ Key Vault ]
@@ -143,15 +140,7 @@ resource "azurerm_key_vault_access_policy" "default" {
   ]
 }
 
-# resource "azurerm_key_vault_access_policy" "mssql_server_default" {
-#   key_vault_id = module.key_vault.id
-#   object_id    = data.terraform_remote_state.sql.outputs.mssql_server.identity[0].principal_id
-#   tenant_id    = data.terraform_remote_state.sql.outputs.mssql_server.identity[0].tenant_id
 
-#   secret_permissions = [
-#     "Get"
-#   ]
-# }
 
 # { Diagnostic Settings }
 module "key_vault_diagnostic_setting" {
@@ -165,7 +154,7 @@ resource "azurerm_private_endpoint" "key_vault" {
   name                = module.key_vault.name
   location            = module.resource_group.location
   resource_group_name = module.resource_group.name
-  subnet_id           = module.subnet2.id
+  subnet_id           = module.subnet-02.id
 
   private_service_connection {
     name                           = module.key_vault.name
