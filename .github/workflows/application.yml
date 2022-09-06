@@ -1,11 +1,11 @@
-name: 'Application'
+name: '03-application'
 
 on:
   push:
     branches:
       - main
     paths:
-        - infrastructures/application/*
+        - infrastructures/03-application/*
         - modules/*
   pull_request:
 
@@ -35,19 +35,19 @@ jobs:
     - name: Terraform Init
       id: init
       run: |
-        cd infrastructures/application/
+        cd infrastructures/03-application/
         terraform init
 
     - name: Terraform Validate
       id: validate
       run: |
-        cd infrastructures/application/
+        cd infrastructures/03-application/
         terraform validate -no-color
 
     - name: Terraform Plan
       id: plan
       run: |
-        cd infrastructures/application/
+        cd infrastructures/03-application/
         terraform plan -no-color -input=false -var-file="terraform.tfvars"
       continue-on-error: true
 
@@ -58,5 +58,5 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        cd infrastructures/application/
+        cd infrastructures/03-application/
         terraform apply -auto-approve -input=false

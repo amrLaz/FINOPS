@@ -1,11 +1,11 @@
-name: 'Sql'
+name: '02-sql'
 
 on:
   push:
     branches:
       - main
     paths:
-        - infrastructures/sql/*
+        - infrastructures/02-sql/*
         - modules/*
   pull_request:
 
@@ -35,19 +35,19 @@ jobs:
     - name: Terraform Init
       id: init
       run: |
-        cd infrastructures/sql/
+        cd infrastructures/02-sql/
         terraform init
 
     - name: Terraform Validate
       id: validate
       run: |
-        cd infrastructures/sql/
+        cd infrastructures/02-sql/
         terraform validate -no-color
 
     - name: Terraform Plan
       id: plan
       run: |
-        cd infrastructures/sql/
+        cd infrastructures/02-sql/
         terraform plan -no-color -input=false -var-file="terraform.tfvars"
       continue-on-error: true
 
@@ -58,5 +58,5 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        cd infrastructures/sql/
+        cd infrastructures/02-sql/
         terraform apply -auto-approve -input=false

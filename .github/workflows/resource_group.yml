@@ -1,11 +1,11 @@
-name: 'Resource_Group'
+name: '01-resource_group'
 
 on:
   push:
     branches:
       - main
     paths:
-        - infrastructures/resource_group/*
+        - infrastructures/01-resource_group/*
         - modules/*
   pull_request:
 
@@ -35,19 +35,19 @@ jobs:
     - name: Terraform Init
       id: init
       run: |
-        cd infrastructures/resource_group/
+        cd infrastructures/01-resource_group/
         terraform init
 
     - name: Terraform Validate
       id: validate
       run: |
-        cd infrastructures/resource_group/
+        cd infrastructures/01-resource_group/
         terraform validate -no-color
 
     - name: Terraform Plan
       id: plan
       run: |
-        cd infrastructures/resource_group/
+        cd infrastructures/01-resource_group/
         terraform plan -no-color -input=false -var-file="terraform.tfvars"
       continue-on-error: true
 
@@ -58,5 +58,5 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        cd infrastructures/resource_group/
+        cd infrastructures/01-resource_group/
         terraform apply -auto-approve -input=false
