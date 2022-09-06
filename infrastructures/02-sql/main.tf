@@ -31,7 +31,7 @@ terraform {
   backend "azurerm" {
     resource_group_name  = "TerraformTfState"
     storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
+    container_name       = "statetf"
     key                  = "development/infrastructures/sql/terraform.tfstate"
   }
 }
@@ -45,7 +45,7 @@ data "terraform_remote_state" "default" {
   config = {
     resource_group_name  = "TerraformTfState"
     storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
+    container_name       = "statetf"
     key                  = "development/infrastructures/resource-group/terraform.tfstate"
   }
 }
@@ -54,7 +54,7 @@ data "terraform_remote_state" "app" {
   config = {
     resource_group_name  = "TerraformTfState"
     storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
+    container_name       = "statetf"
     key                  = "development/infrastructures/app/terraform.tfstate"
   }
 }
@@ -94,15 +94,7 @@ module "mssql_server_default" {
   })
 }
 
-resource "azurerm_key_vault_access_policy" "mssql_server_default" {
-  key_vault_id = data.terraform_remote_state.default.outputs.key_vault.id
-  object_id    = module.mssql_server.identity[0].principal_id
-  tenant_id    = module.mssql_server.identity[0].tenant_id
 
-  secret_permissions = [
-    "Get"
-  ]
-}
 
 
 # [DATABASE] --------------------------------------------------------------------------------------------------------------

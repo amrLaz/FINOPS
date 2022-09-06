@@ -13,7 +13,7 @@ terraform {
   backend "azurerm" {
     resource_group_name  = "TerraformTfState"
     storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
+    container_name       = "statetf"
     key                  = "development/infrastructures/application/terraform.tfstate"
   }
 }
@@ -42,25 +42,17 @@ data "terraform_remote_state" "default" {
   config = {
     resource_group_name  = "TerraformTfState"
     storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
+    container_name       = "statetf"
     key                  = "development/infrastructures/resource-group/terraform.tfstate"
   }
 }
-data "terraform_remote_state" "analytics" {
-  backend = "azurerm"
-  config = {
-    resource_group_name  = "TerraformTfState"
-    storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
-    key                  = "development/infrastructures/analytics/terraform.tfstate"
-  }
-}
+
 data "terraform_remote_state" "sql" {
   backend = "azurerm"
   config = {
     resource_group_name  = "TerraformTfState"
     storage_account_name = "tfstorageamr"
-    container_name       = "tfstate"
+    container_name       = "statetf"
     key                  = "development/infrastructures/sql/terraform.tfstate"
   }
 }
