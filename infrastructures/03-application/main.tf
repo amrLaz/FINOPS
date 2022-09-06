@@ -177,7 +177,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "key_vault" {
 }
 
 resource "azurerm_private_dns_a_record" "key_vault" {
-  name                =  data.terraform_remote_state.default.outputs.key_vault.name
+  name                =  lower(data.terraform_remote_state.default.outputs.key_vault.name)
   zone_name           = azurerm_private_dns_zone.key_vault.name
   resource_group_name = data.terraform_remote_state.default.outputs.resource_group.name
   ttl                 = 3600
