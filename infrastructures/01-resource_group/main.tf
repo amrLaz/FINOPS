@@ -1,4 +1,4 @@
-# [ Providers ]
+# [Providers]
 
 terraform {
   required_providers {
