@@ -1,0 +1,3 @@
+move vnet and log analytics to resource group config
+initialise folders with numbers 
+add tags

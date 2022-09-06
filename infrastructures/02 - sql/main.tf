@@ -79,45 +79,6 @@ locals {
   ]
 }
 
-# [Virtual Network]
-# ------------------------------------------------------------------------------------------------------------------------------------
-module "virtual_network" {
-  source         = "../../modules/microsoft/azurerm/azurerm_virtual_network"
-  resource_group = data.terraform_remote_state.default.outputs.resource_group
-  naming_options = local.naming_options
-  address_space  = local.address_space
-}
-
-
-module "subnet-00" {
-  source           = "../../modules/microsoft/azurerm/azurerm_subnet/default"
-  resource_group   = data.terraform_remote_state.default.outputs.resource_group
-  virtual_network  = module.virtual_network
-  naming_options   = merge(local.naming_options, { suffix : "database" })
-  address_prefixes = [local.address_space[0]]
-}
-
-module "subnet-01" {
-  source           = "../../modules/microsoft/azurerm/azurerm_subnet/default"
-  resource_group   = data.terraform_remote_state.default.outputs.resource_group
-  virtual_network  = module.virtual_network
-  naming_options   = merge(local.naming_options, { suffix : "web-app" })
-  address_prefixes = [local.address_space[1]]
-  delegation = {
-    service_delegation = {
-      "name"    = "Microsoft.Web/serverFarms"
-      "actions" = ["Microsoft.Network/virtualNetworks/subnets/action"]
-    }
-  }
-}
-
-module "subnet-02" {
-  source           = "../../modules/microsoft/azurerm/azurerm_subnet/default"
-  resource_group   = data.terraform_remote_state.default.outputs.resource_group
-  virtual_network  = module.virtual_network
-  naming_options   = merge(local.naming_options, { suffix : "key-vault" })
-  address_prefixes = [local.address_space[2]]
-}
 
 # [SQL SERVER]----------------------------------------------------------------------------------------------------------------------------
 module "mssql_server_default" {
@@ -142,7 +103,7 @@ resource "azurerm_private_endpoint" "mssql_server_pe" {
   name                = module.mssql_server_default.name
   location            = data.terraform_remote_state.default.outputs.resource_group.location
   resource_group_name = data.terraform_remote_state.default.outputs.resource_group.name
-  subnet_id           = module.subnet-00.id
+  subnet_id           = data.terraform_remote_state.default.outputs.subnet-00.id
 
   private_service_connection {
     name                           = module.mssql_server_default.name

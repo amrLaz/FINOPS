@@ -118,16 +118,16 @@ resource "azurerm_key_vault_access_policy" "mssql_server_default" {
 # { Diagnostic Settings }
 module "key_vault_diagnostic_setting" {
   source                     = "../../modules/microsoft/azurerm/azurerm_monitor_diagnostic_setting"
-  name                       = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.name
+  name                       = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.name
   target_resource_id         = module.key_vault.id
-  log_analytics_workspace_id = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.id
+  log_analytics_workspace_id = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.id
 }
 
 resource "azurerm_private_endpoint" "key_vault" {
   name                = module.key_vault.name
   location            = data.terraform_remote_state.default.outputs.resource_group.location
   resource_group_name = data.terraform_remote_state.default.outputs.resource_group.name
-  subnet_id           = data.terraform_remote_state.sql.outputs.subnet2.id
+  subnet_id           = data.terraform_remote_state.resource_group.outputs.subnet2.id
 
   private_service_connection {
     name                           = module.key_vault.name
@@ -143,15 +143,15 @@ module "application_insights" {
   source         = "../../modules/microsoft/azurerm/azurerm_application_insights"
   resource_group = data.terraform_remote_state.default.outputs.resource_group
   naming_options = local.naming_options
-  workspace_id   = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.id
+  workspace_id   = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.id
 }
 
 # { Diagnostic Settings }
 module "application_insights_diagnostic_setting" {
   source                     = "../../modules/microsoft/azurerm/azurerm_monitor_diagnostic_setting"
-  name                       = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.name
+  name                       = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.name
   target_resource_id         = module.application_insights.id
-  log_analytics_workspace_id = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.id
+  log_analytics_workspace_id = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.id
 }
 
 # App-Insights secrets------------------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "sql_database" {
   name                  = azurerm_private_dns_zone.sql_database.name
   resource_group_name   = data.terraform_remote_state.default.outputs.resource_group.name
   private_dns_zone_name = azurerm_private_dns_zone.sql_database.name
-  virtual_network_id    = data.terraform_remote_state.sql.outputs.virtual-network.id
+  virtual_network_id    = data.terraform_remote_state.resource_group.outputs.virtual-network.id
   registration_enabled  = false
 
 }
@@ -207,7 +207,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "key_vault" {
   name                  = azurerm_private_dns_zone.key_vault.name
   resource_group_name   = data.terraform_remote_state.default.outputs.resource_group.name
   private_dns_zone_name = azurerm_private_dns_zone.key_vault.name
-  virtual_network_id    = data.terraform_remote_state.sql.outputs.virtual-network.id
+  virtual_network_id    = data.terraform_remote_state.resource_group.outputs.virtual-network.id
   registration_enabled  = false
 
 }
@@ -237,9 +237,9 @@ module "service_plan" {
 # -------------------------------------------
 module "service_plan_diagnostic_setting" {
   source                     = "../../modules/microsoft/azurerm/azurerm_monitor_diagnostic_setting"
-  name                       = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.name
+  name                       = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.name
   target_resource_id         = module.service_plan.id
-  log_analytics_workspace_id = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.id
+  log_analytics_workspace_id = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.id
 }
 
 # [ Function ]
@@ -281,9 +281,9 @@ module "worker" {
 # { Diagnostic Settings }
 module "worker_diagnostic_setting" {
   source                     = "../../modules/microsoft/azurerm/azurerm_monitor_diagnostic_setting"
-  name                       = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.name
+  name                       = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.name
   target_resource_id         = module.worker.id
-  log_analytics_workspace_id = data.terraform_remote_state.analytics.outputs.log_analytics_workspace.id
+  log_analytics_workspace_id = data.terraform_remote_state.resource_group.outputs.log_analytics_workspace.id
 }
 
 # { Key Vault - Policies }
@@ -300,7 +300,7 @@ resource "azurerm_key_vault_access_policy" "worker" {
 # Virtual network integration
 # resource "azurerm_app_service_virtual_network_swift_connection" "example" {
 #   app_service_id = module.worker.id
-#   subnet_id      = data.terraform_remote_state.sql.outputs.subnet1.id
+#   subnet_id      = data.terraform_remote_state.resource_group.outputs.subnet1.id
 # }
 # [STORAGE] --------------------------------------------------------------------------------------------------------------------------------
 resource "random_id" "secret" {

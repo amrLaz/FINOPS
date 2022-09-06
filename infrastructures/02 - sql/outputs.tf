@@ -13,18 +13,3 @@ output "pe-mssql" {
 
 }
 
-output "subnet2" {
-  value     = module.subnet-02
-  sensitive = true
-}
-
-output "subnet1" {
-  value     = module.subnet-01
-  sensitive = true
-}
-
-
-output "virtual-network" {
-  value     = module.virtual_network
-  sensitive = true
-}
