@@ -145,9 +145,9 @@ resource "azurerm_key_vault_access_policy" "default" {
 # { Diagnostic Settings }
 module "key_vault_diagnostic_setting" {
   source                     = "../../modules/microsoft/azurerm/azurerm_monitor_diagnostic_setting"
-  name                       = module.log_analytics_workspace.name
+  name                       = module.bb_log_analytics_workspace.name
   target_resource_id         = module.key_vault.id
-  log_analytics_workspace_id = module.log_analytics_workspace.id
+  log_analytics_workspace_id = module.bb_log_analytics_workspace.id
 }
 
 resource "azurerm_private_endpoint" "key_vault" {
